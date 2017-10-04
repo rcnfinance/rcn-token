@@ -16,7 +16,7 @@ contract('RCNToken', function(accounts) {
         }).then(function(){
             return instanceRcn.balanceOf(accounts[1]);
         }).then(function(balance){
-            assert.equal(balance.toNumber(), rcnToWei(127500 * 4000), "Account 1 should have 700.000.000 RCN");
+            assert.equal(balance.toNumber(), rcnToWei(127500 * 4000), "Account 1 should have 510.000.000 RCN");
             return instanceRcn.finalize({ from: accounts[2] });
         }).then(function(){
             return instanceRcn.isFinalized();
