@@ -26,7 +26,7 @@ contract RCNToken is StandardToken, Crowdsale {
     uint256 public constant tokenExchangeRate = 4000; // 4000 RCN tokens per 1 ETH
     uint256 public constant tokenCreationCap =  1000 * (10**6) * 10**decimals;
     uint256 public constant tokenCreationMin =  690 * (10**6) * 10**decimals;
-    uint256 public constant capPerAddress = 20 * tokenExchangeRate * 10**decimals;
+    uint256 public constant capPerAddress = 20 * tokenExchangeRate * 10**decimals; // 20 ETH
     uint256 public constant minBuyTokens = 400 * 10**decimals; // 0.1 ETH
 
     // events
