@@ -1,7 +1,7 @@
 var RCNToken = artifacts.require("./rcn/RCNToken.sol");
 
 function rcnToWei(value){
-    return value * 10**18;
+    return value * Math.pow(10, 18);
 }
 
 contract('RCNToken', function(accounts) {

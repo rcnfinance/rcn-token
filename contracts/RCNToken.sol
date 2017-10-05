@@ -25,7 +25,7 @@ contract RCNToken is StandardToken, Crowdsale {
     uint256 public constant tokenExchangeRate = 4000; // 4000 RCN tokens per 1 ETH
     uint256 public constant tokenCreationCap =  1000 * (10**6) * 10**decimals;
     uint256 public constant tokenCreationMin =  690 * (10**6) * 10**decimals;
-
+    uint256 public constant minBuyTokens = 400 * 10**decimals; // 0.1 ETH
 
     // events
     event LogRefund(address indexed _to, uint256 _value);
@@ -64,6 +64,9 @@ contract RCNToken is StandardToken, Crowdsale {
 
       // return money if something goes wrong
       if (tokenCreationCap < checkedSupply) throw;  // odd fractions won't be found
+
+      // return money if tokens is less than the min amount
+      if (tokens < minBuyTokens && (tokenCreationCap - totalSupply) > minBuyTokens) throw;
 
       totalSupply = checkedSupply;
       balances[beneficiary] += tokens;  // safeAdd not needed; bad semantics to use here
