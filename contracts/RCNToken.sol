@@ -65,7 +65,8 @@ contract RCNToken is StandardToken, Crowdsale {
       // return money if something goes wrong
       if (tokenCreationCap < checkedSupply) throw;  // odd fractions won't be found
 
-      // return money if tokens is less than the min amount
+      // return money if tokens is less than the min amount and the token is not finalizing
+      // the min amount does not apply if the availables tokens are less than the min amount.
       if (tokens < minBuyTokens && (tokenCreationCap - totalSupply) > minBuyTokens) throw;
 
       totalSupply = checkedSupply;
@@ -78,7 +79,7 @@ contract RCNToken is StandardToken, Crowdsale {
       if (isFinalized) throw;
       if (msg.sender != ethFundDeposit) throw; // locks finalize to the ultimate ETH owner
       if(totalSupply < tokenCreationMin) throw;      // have to sell minimum to move to operational
-      if(block.number <= fundingEndBlock && totalSupply < tokenCreationCap - minBuyTokens) throw;
+      if(block.number <= fundingEndBlock && totalSupply != tokenCreationCap) throw;
       // move to operational
       isFinalized = true;
       if(!ethFundDeposit.send(this.balance)) throw;  // send the eth to Ripio International
