@@ -34,10 +34,10 @@ contract RCNCrowdsale is Crowdsale {
     event CreateRCN(address indexed _to, uint256 _value);
 
     mapping (address => uint256) bought; // cap map
-    address whitelistContract;
 
     uint256 public raised;
 
+    CapWhitelist public whiteList;
     MintableToken public token;
 
     // constructor
@@ -46,6 +46,7 @@ contract RCNCrowdsale is Crowdsale {
           uint256 _fundingStartBlock,
           uint256 _fundingEndBlock) {
       token = new MintableToken();
+      whiteList = new CapWhitelist();
       isFinalized = false;                   //controls pre through crowdsale state
       ethFundDeposit = _ethFundDeposit;
       rcnFundDeposit = _rcnFundDeposit;
@@ -53,7 +54,6 @@ contract RCNCrowdsale is Crowdsale {
       fundingEndBlock = _fundingEndBlock;
       token.mint(rcnFundDeposit, rcnFund);
       raised = rcnFund;
-      whitelistContract = new CapWhitelist();
       CreateRCN(rcnFundDeposit, rcnFund);  // logs Ripio Intl fund
     }
 
@@ -64,6 +64,7 @@ contract RCNCrowdsale is Crowdsale {
 
     // low level token purchase function
     function buyTokens(address beneficiary) payable {
+      if (isFinalized) throw;
       if (block.number < fundingStartBlock) throw;
       if (block.number > fundingEndBlock) throw;
       if (msg.value == 0) throw;
@@ -73,7 +74,7 @@ contract RCNCrowdsale is Crowdsale {
       uint256 checkedSupply = raised.add(tokens);
 
       // if sender is not whitelisted and exceeds the cap, cancel the transaction
-      if (!CapWhitelist(whitelistContract).whitelist(msg.sender))
+      if (!whiteList.whitelist(msg.sender))
         if (bought[msg.sender] + tokens > capPerAddress) throw;
 
       // return money if something goes wrong
@@ -89,6 +90,15 @@ contract RCNCrowdsale is Crowdsale {
       CreateRCN(beneficiary, tokens);  // logs token creation
 
       forwardFunds();
+    }
+
+    function finalize() {
+      if (isFinalized) throw;
+      if (block.number <= fundingEndBlock && raised != tokenCreationCap) throw;
+      if (msg.sender != ethFundDeposit) throw;
+      isFinalized = true;
+      token.finishMinting();
+      whiteList.destruct();
     }
 
     // send ether to the fund collection wallet
