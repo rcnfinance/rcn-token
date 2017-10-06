@@ -6,7 +6,7 @@ import "./Crowdsale.sol";
 import "./CapWhitelist.sol";
 import "./MintableToken.sol";
 
-contract RCNToken is Crowdsale {
+contract RCNCrowdsale is Crowdsale {
     using SafeMath for uint256;
 
     // metadata
@@ -41,7 +41,7 @@ contract RCNToken is Crowdsale {
     MintableToken public token;
 
     // constructor
-    function RCNToken(address _ethFundDeposit,
+    function RCNCrowdsale(address _ethFundDeposit,
           address _rcnFundDeposit,
           uint256 _fundingStartBlock,
           uint256 _fundingEndBlock) {

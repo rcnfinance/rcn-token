@@ -1,13 +1,13 @@
-var RCNToken = artifacts.require("./rcn/RCNToken.sol");
+var RCNCrowdsale = artifacts.require("./rcn/RCNCrowdsale.sol");
 var StandardToken = artifacts.require("./rcn/StandardToken.sol");
 
 function rcnToWei(value){
     return value * Math.pow(10, 18);
 }
 
-contract('RCNToken', function(accounts) {
+contract('RCNCrowdsale', function(accounts) {
     it("Create and send tokens", function(){
-        return RCNToken.new(accounts[0], accounts[0], 0, 1170000).then(function(instance){
+        return RCNCrowdsale.new(accounts[0], accounts[0], 0, 1170000).then(function(instance){
             this.instanceRcn = instance;
             return this.instanceRcn.createTokens({from: accounts[1], value: web3.toWei('1', 'ether')});
         }).then(function(){
@@ -30,7 +30,7 @@ contract('RCNToken', function(accounts) {
         });
     });
     it("Should not buy tokens, min amount limit", function(){
-        return RCNToken.new(accounts[0], accounts[0], 0, 1170000).then(function(instance){
+        return RCNCrowdsale.new(accounts[0], accounts[0], 0, 1170000).then(function(instance){
             this.instanceRcn = instance;
             return instanceRcn.token();            
         }).then(function(token){
