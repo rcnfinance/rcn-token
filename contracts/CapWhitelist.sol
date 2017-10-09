@@ -8,8 +8,7 @@ contract CapWhitelist {
 
     function CapWhitelist() {
         owner = msg.sender;
-        // Replace in prod
-        setWhitelistInternal(address(0xeab987dc90b29b9c0ec4863463697907e7ce1d55), 100000000000000000000000000000000000000000);
+        // Set in prod
     }
 
     function destruct() {
