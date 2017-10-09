@@ -26,7 +26,6 @@ contract RCNCrowdsale is Crowdsale {
     uint256 public constant rcnFund = 490 * (10**6) * 10**decimals;   // 490m RCN reserved for Ripio use
     uint256 public constant tokenExchangeRate = 4000; // 4000 RCN tokens per 1 ETH
     uint256 public constant tokenCreationCap =  1000 * (10**6) * 10**decimals;
-    uint256 public constant capPerAddress = 20 * tokenExchangeRate * 10**decimals; // 20 ETH
     uint256 public constant minBuyTokens = 400 * 10**decimals; // 0.1 ETH
 
     // events
@@ -74,8 +73,7 @@ contract RCNCrowdsale is Crowdsale {
       uint256 checkedSupply = raised.add(tokens);
 
       // if sender is not whitelisted and exceeds the cap, cancel the transaction
-      if (!whiteList.whitelist(msg.sender))
-        if (bought[msg.sender] + tokens > capPerAddress) throw;
+      if (bought[msg.sender] + tokens > whiteList.whitelist(msg.sender)) throw;
 
       // return money if something goes wrong
       if (tokenCreationCap < checkedSupply) throw;  // odd fractions won't be found
@@ -104,5 +102,10 @@ contract RCNCrowdsale is Crowdsale {
     // send ether to the fund collection wallet
     function forwardFunds() internal {
       ethFundDeposit.transfer(msg.value);
+    }
+
+    function setWhitelist(address _address, uint256 _amount) {
+      if (msg.sender != ethFundDeposit) throw;
+      whiteList.setWhitelisted(_address, _amount);
     }
 }
