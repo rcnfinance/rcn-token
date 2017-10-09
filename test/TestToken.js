@@ -9,6 +9,8 @@ contract('RCNCrowdsale', function(accounts) {
     it("Create and send tokens", function(){
         return RCNCrowdsale.new(accounts[0], accounts[0], 0, 1170000).then(function(instance){
             this.instanceRcn = instance;
+            return this.instanceRcn.setWhitelist(accounts[1], rcnToWei(1 * 4000), { from: accounts[0] })
+        }).then(function(){
             return this.instanceRcn.createTokens({from: accounts[1], value: web3.toWei('1', 'ether')});
         }).then(function(){
             return instanceRcn.token();
