@@ -64,7 +64,7 @@ contract('RCNCrowdsale', function(accounts) {
         }).then(function(tokenInstance){
             this.token2 = tokenInstance;
             this.instanceRcn = instance;
-            return instanceRcn.createTokens({from: accounts[1], value: web3.toWei('0.09', 'ether')});
+            return instanceRcn.createTokens({from: accounts[1], value: web3.toWei('2', 'ether')});
         }).catch(function(exception){
             this.savedException = exception;
         }).then(function(){
