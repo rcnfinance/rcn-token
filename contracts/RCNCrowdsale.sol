@@ -4,16 +4,13 @@ import "./StandardToken.sol";
 import "./zeppelin/SafeMath.sol";
 import "./Crowdsale.sol";
 import "./CapWhitelist.sol";
-import "./MintableToken.sol";
+import "./RCNToken.sol";
 
 contract RCNCrowdsale is Crowdsale {
     using SafeMath for uint256;
 
     // metadata
-    string public constant name = "Ripio Credit Network Token";
-    string public constant symbol = "RCN";
     uint256 public constant decimals = 18;
-    string public version = "1.0";
 
     // contracts
     address public ethFundDeposit;      // deposit address for ETH for Ripio
@@ -37,14 +34,14 @@ contract RCNCrowdsale is Crowdsale {
     uint256 public raised;
 
     CapWhitelist public whiteList;
-    MintableToken public token;
+    RCNToken public token;
 
     // constructor
     function RCNCrowdsale(address _ethFundDeposit,
           address _rcnFundDeposit,
           uint256 _fundingStartBlock,
           uint256 _fundingEndBlock) {
-      token = new MintableToken();
+      token = new RCNToken();
       whiteList = new CapWhitelist();
       isFinalized = false;                   //controls pre through crowdsale state
       ethFundDeposit = _ethFundDeposit;
