@@ -67,25 +67,25 @@ contract RCNCrowdsale is Crowdsale {
 
     // low level token purchase function
     function buyTokens(address beneficiary) payable {
-      if (isFinalized) throw;
-      if (block.timestamp < fundingStartTimestamp) throw;
-      if (block.timestamp > fundingEndTimestamp) throw;
-      if (msg.value == 0) throw;
-      if (beneficiary == 0x0) throw;
+      require (!isFinalized);
+      require (block.timestamp >= fundingStartTimestamp);
+      require (block.timestamp <= fundingEndTimestamp);
+      require (msg.value != 0);
+      require (beneficiary != 0x0);
 
       uint256 tokens = msg.value.mul(tokenExchangeRate); // check that we're not over totals
       uint256 checkedSupply = raised.add(tokens);
       uint256 checkedBought = bought[msg.sender].add(tokens);
 
       // if sender is not whitelisted and exceeds the cap, cancel the transaction
-      if (checkedBought > whiteList.whitelist(msg.sender)) throw;
+      require (checkedBought <= whiteList.whitelist(msg.sender));
 
       // return money if something goes wrong
-      if (tokenCreationCap < checkedSupply) throw;  // odd fractions won't be found
+      require (tokenCreationCap >= checkedSupply);
 
       // return money if tokens is less than the min amount and the token is not finalizing
       // the min amount does not apply if the availables tokens are less than the min amount.
-      if (tokens < minBuyTokens && (tokenCreationCap - raised) > minBuyTokens) throw;
+      require (tokens >= minBuyTokens || (tokenCreationCap - raised) <= minBuyTokens);
 
       raised = checkedSupply;
       token.mint(beneficiary, tokens);
@@ -96,9 +96,9 @@ contract RCNCrowdsale is Crowdsale {
     }
 
     function finalize() {
-      if (isFinalized) throw;
-      if (block.timestamp <= fundingEndTimestamp && raised != tokenCreationCap) throw;
-      if (msg.sender != ethFundDeposit) throw;
+      require (!isFinalized);
+      require (block.timestamp > fundingEndTimestamp || raised == tokenCreationCap);
+      require (msg.sender == ethFundDeposit);
       isFinalized = true;
       token.finishMinting();
       whiteList.destruct();
@@ -110,7 +110,7 @@ contract RCNCrowdsale is Crowdsale {
     }
 
     function setWhitelist(address _address, uint256 _amount) {
-      if (msg.sender != ethFundDeposit) throw;
+      require (msg.sender == ethFundDeposit);
       whiteList.setWhitelisted(_address, _amount);
     }
 }
