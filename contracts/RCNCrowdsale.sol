@@ -73,7 +73,7 @@ contract RCNCrowdsale is Crowdsale {
       uint256 checkedSupply = token.totalSupply().add(tokens);
       uint256 checkedBought = bought[msg.sender].add(tokens);
 
-      // if sender is not whitelisted and exceeds the cap, cancel the transaction
+      // if sender is not whitelisted or exceeds their cap, cancel the transaction
       require (checkedBought <= whiteList.whitelist(msg.sender));
 
       // return money if something goes wrong
