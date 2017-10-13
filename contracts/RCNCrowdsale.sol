@@ -26,7 +26,6 @@ contract RCNCrowdsale is Crowdsale {
     uint256 public constant minBuyTokens = 400 * 10**decimals; // 0.1 ETH
 
     // events
-    event LogRefund(address indexed _to, uint256 _value);
     event CreateRCN(address indexed _to, uint256 _value);
 
     mapping (address => uint256) bought; // cap map
