@@ -43,6 +43,13 @@ contract RCNCrowdsale is Crowdsale {
           uint256 _fundingEndBlock) {
       token = new RCNToken();
       whiteList = new CapWhitelist();
+
+      // sanity checks
+      assert(_ethFundDeposit != 0x0);
+      assert(_rcnFundDeposit != 0x0);
+      assert(_fundingStartBlock < _fundingEndBlock);
+      assert(uint256(token.decimals()) == decimals); 
+
       isFinalized = false;                   //controls pre through crowdsale state
       ethFundDeposit = _ethFundDeposit;
       rcnFundDeposit = _rcnFundDeposit;
