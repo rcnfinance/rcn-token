@@ -71,9 +71,10 @@ contract RCNCrowdsale is Crowdsale {
 
       uint256 tokens = msg.value.mul(tokenExchangeRate); // check that we're not over totals
       uint256 checkedSupply = raised.add(tokens);
+      uint256 checkedBought = bought[msg.sender].add(tokens);
 
       // if sender is not whitelisted and exceeds the cap, cancel the transaction
-      if (bought[msg.sender] + tokens > whiteList.whitelist(msg.sender)) throw;
+      if (checkedBought > whiteList.whitelist(msg.sender)) throw;
 
       // return money if something goes wrong
       if (tokenCreationCap < checkedSupply) throw;  // odd fractions won't be found
@@ -84,7 +85,7 @@ contract RCNCrowdsale is Crowdsale {
 
       raised = checkedSupply;
       token.mint(beneficiary, tokens);
-      bought[msg.sender] += tokens;
+      bought[msg.sender] = checkedBought;
       CreateRCN(beneficiary, tokens);  // logs token creation
 
       forwardFunds();
