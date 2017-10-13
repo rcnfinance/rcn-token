@@ -18,8 +18,8 @@ contract RCNCrowdsale is Crowdsale {
 
     // crowdsale parameters
     bool public isFinalized;              // switched to true in operational state
-    uint256 public fundingStartBlock;
-    uint256 public fundingEndBlock;
+    uint256 public fundingStartTimestamp;
+    uint256 public fundingEndTimestamp;
     uint256 public constant rcnFund = 490 * (10**6) * 10**decimals;   // 490m RCN reserved for Ripio use
     uint256 public constant tokenExchangeRate = 4000; // 4000 RCN tokens per 1 ETH
     uint256 public constant tokenCreationCap =  1000 * (10**6) * 10**decimals;
@@ -39,22 +39,22 @@ contract RCNCrowdsale is Crowdsale {
     // constructor
     function RCNCrowdsale(address _ethFundDeposit,
           address _rcnFundDeposit,
-          uint256 _fundingStartBlock,
-          uint256 _fundingEndBlock) {
+          uint256 _fundingStartTimestamp,
+          uint256 _fundingEndTimestamp) {
       token = new RCNToken();
       whiteList = new CapWhitelist();
 
       // sanity checks
       assert(_ethFundDeposit != 0x0);
       assert(_rcnFundDeposit != 0x0);
-      assert(_fundingStartBlock < _fundingEndBlock);
+      assert(_fundingStartTimestamp < _fundingEndTimestamp);
       assert(uint256(token.decimals()) == decimals); 
 
       isFinalized = false;                   //controls pre through crowdsale state
       ethFundDeposit = _ethFundDeposit;
       rcnFundDeposit = _rcnFundDeposit;
-      fundingStartBlock = _fundingStartBlock;
-      fundingEndBlock = _fundingEndBlock;
+      fundingStartTimestamp = _fundingStartTimestamp;
+      fundingEndTimestamp = _fundingEndTimestamp;
       token.mint(rcnFundDeposit, rcnFund);
       raised = rcnFund;
       CreateRCN(rcnFundDeposit, rcnFund);  // logs Ripio Intl fund
@@ -68,8 +68,8 @@ contract RCNCrowdsale is Crowdsale {
     // low level token purchase function
     function buyTokens(address beneficiary) payable {
       if (isFinalized) throw;
-      if (block.number < fundingStartBlock) throw;
-      if (block.number > fundingEndBlock) throw;
+      if (block.timestamp < fundingStartTimestamp) throw;
+      if (block.timestamp > fundingEndTimestamp) throw;
       if (msg.value == 0) throw;
       if (beneficiary == 0x0) throw;
 
@@ -97,7 +97,7 @@ contract RCNCrowdsale is Crowdsale {
 
     function finalize() {
       if (isFinalized) throw;
-      if (block.number <= fundingEndBlock && raised != tokenCreationCap) throw;
+      if (block.timestamp <= fundingEndTimestamp && raised != tokenCreationCap) throw;
       if (msg.sender != ethFundDeposit) throw;
       isFinalized = true;
       token.finishMinting();
