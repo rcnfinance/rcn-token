@@ -31,8 +31,6 @@ contract RCNCrowdsale is Crowdsale {
 
     mapping (address => uint256) bought; // cap map
 
-    uint256 public raised;
-
     CapWhitelist public whiteList;
     RCNToken public token;
 
@@ -56,7 +54,6 @@ contract RCNCrowdsale is Crowdsale {
       fundingStartTimestamp = _fundingStartTimestamp;
       fundingEndTimestamp = _fundingEndTimestamp;
       token.mint(rcnFundDeposit, rcnFund);
-      raised = rcnFund;
       CreateRCN(rcnFundDeposit, rcnFund);  // logs Ripio Intl fund
     }
 
@@ -74,7 +71,7 @@ contract RCNCrowdsale is Crowdsale {
       require (beneficiary != 0x0);
 
       uint256 tokens = msg.value.mul(tokenExchangeRate); // check that we're not over totals
-      uint256 checkedSupply = raised.add(tokens);
+      uint256 checkedSupply = token.totalSupply().add(tokens);
       uint256 checkedBought = bought[msg.sender].add(tokens);
 
       // if sender is not whitelisted and exceeds the cap, cancel the transaction
@@ -85,9 +82,8 @@ contract RCNCrowdsale is Crowdsale {
 
       // return money if tokens is less than the min amount and the token is not finalizing
       // the min amount does not apply if the availables tokens are less than the min amount.
-      require (tokens >= minBuyTokens || (tokenCreationCap - raised) <= minBuyTokens);
+      require (tokens >= minBuyTokens || (tokenCreationCap - token.totalSupply()) <= minBuyTokens);
 
-      raised = checkedSupply;
       token.mint(beneficiary, tokens);
       bought[msg.sender] = checkedBought;
       CreateRCN(beneficiary, tokens);  // logs token creation
@@ -97,7 +93,7 @@ contract RCNCrowdsale is Crowdsale {
 
     function finalize() {
       require (!isFinalized);
-      require (block.timestamp > fundingEndTimestamp || raised == tokenCreationCap);
+      require (block.timestamp > fundingEndTimestamp || token.totalSupply() == tokenCreationCap);
       require (msg.sender == ethFundDeposit);
       isFinalized = true;
       token.finishMinting();
