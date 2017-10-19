@@ -24,7 +24,7 @@ contract RCNCrowdsale is Crowdsale {
     uint256 public constant tokenExchangeRate = 4000; // 4000 RCN tokens per 1 ETH
     uint256 public constant tokenCreationCap =  1000 * (10**6) * 10**decimals;
     uint256 public constant minBuyTokens = 400 * 10**decimals; // 0.1 ETH
-    uint256 public constant gasPriceLimit = 60 * 10**9; // Gas limit 21 gwei
+    uint256 public constant gasPriceLimit = 60 * 10**9; // Gas limit 60 gwei
 
     // events
     event CreateRCN(address indexed _to, uint256 _value);
