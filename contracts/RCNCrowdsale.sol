@@ -24,6 +24,7 @@ contract RCNCrowdsale is Crowdsale {
     uint256 public constant tokenExchangeRate = 4000; // 4000 RCN tokens per 1 ETH
     uint256 public constant tokenCreationCap =  1000 * (10**6) * 10**decimals;
     uint256 public constant minBuyTokens = 400 * 10**decimals; // 0.1 ETH
+    uint256 public constant gasPriceLimit = 60 * 10**9; // Gas limit 60 gwei
 
     // events
     event CreateRCN(address indexed _to, uint256 _value);
@@ -68,6 +69,7 @@ contract RCNCrowdsale is Crowdsale {
       require (block.timestamp <= fundingEndTimestamp);
       require (msg.value != 0);
       require (beneficiary != 0x0);
+      require (tx.gasprice <= gasPriceLimit);
 
       uint256 tokens = msg.value.mul(tokenExchangeRate); // check that we're not over totals
       uint256 checkedSupply = token.totalSupply().add(tokens);
