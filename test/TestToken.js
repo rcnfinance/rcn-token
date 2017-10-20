@@ -13,7 +13,7 @@ contract('RCNCrowdsale', function(accounts) {
             this.initialBalanceFunding = web3.eth.getBalance(accounts[0]).toNumber();
             return this.instanceRcn.setWhitelist(accounts[1], rcnToWei(1 * 4000), { from: accounts[0] })
         }).then(function(){
-            return this.instanceRcn.createTokens({from: accounts[1], value: web3.toWei('1', 'ether')});
+            return this.instanceRcn.buyTokens(accounts[1], {from: accounts[1], value: web3.toWei('1', 'ether')});
         }).then(function(){
             return instanceRcn.token();
         }).then(function(token){
@@ -47,7 +47,7 @@ contract('RCNCrowdsale', function(accounts) {
         }).then(function(tokenInstance){
             this.token2 = tokenInstance;
             this.instanceRcn = instance;
-            return instanceRcn.createTokens({from: accounts[1], value: web3.toWei('0.09', 'ether')});
+            return instanceRcn.buyTokens(accounts[1], {from: accounts[1], value: web3.toWei('0.09', 'ether')});
         }).catch(function(exception){
             this.savedException = exception;
         }).then(function(){
@@ -67,7 +67,7 @@ contract('RCNCrowdsale', function(accounts) {
         }).then(function(tokenInstance){
             this.token2 = tokenInstance;
             this.instanceRcn = instance;
-            return instanceRcn.createTokens({from: accounts[1], value: web3.toWei('2', 'ether')});
+            return instanceRcn.buyTokens(accounts[1], {from: accounts[1], value: web3.toWei('2', 'ether')});
         }).catch(function(exception){
             this.savedException = exception;
         }).then(function(){
