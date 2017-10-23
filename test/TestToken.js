@@ -13,7 +13,7 @@ contract('RCNCrowdsale', function(accounts) {
             this.initialBalanceFunding = web3.eth.getBalance(accounts[0]).toNumber();
             return this.instanceRcn.setWhitelist(accounts[1], rcnToWei(1 * 4000), { from: accounts[0] })
         }).then(function(){
-            return this.instanceRcn.buyTokens(accounts[1], {from: accounts[1], value: web3.toWei('1', 'ether')});
+            return web3.eth.sendTransaction({to: instanceRcn.address, from: accounts[1], value: web3.toWei('1', 'ether')})
         }).then(function(){
             return instanceRcn.token();
         }).then(function(token){
