@@ -57,8 +57,8 @@ contract RCNCrowdsale is Crowdsale {
       CreateRCN(rcnFundDeposit, rcnFund);  // logs Ripio Intl fund
     }
 
-    /// @dev Accepts ether and creates new RCN tokens.
-    function createTokens() payable external {
+    // fallback function can be used to buy tokens
+    function () payable {
       buyTokens(msg.sender);
     }
 
