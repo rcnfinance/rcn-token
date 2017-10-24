@@ -7,12 +7,13 @@ function rcnToWei(value){
 
 contract('RCNCrowdsale', function(accounts) {
     it("Create and send tokens", function(){
-        return RCNCrowdsale.new(accounts[0], accounts[0], 0, 1170000).then(function(instance){
+        currentTime = Math.floor(Date.now() / 1000);
+        return RCNCrowdsale.new(accounts[0], accounts[0], currentTime - 1, currentTime + 10).then(function(instance){
             this.instanceRcn = instance;
             this.initialBalanceFunding = web3.eth.getBalance(accounts[0]).toNumber();
             return this.instanceRcn.setWhitelist(accounts[1], rcnToWei(1 * 4000), { from: accounts[0] })
         }).then(function(){
-            return this.instanceRcn.createTokens({from: accounts[1], value: web3.toWei('1', 'ether')});
+            return web3.eth.sendTransaction({to: instanceRcn.address, from: accounts[1], value: web3.toWei('1', 'ether')})
         }).then(function(){
             return instanceRcn.token();
         }).then(function(token){
@@ -35,7 +36,8 @@ contract('RCNCrowdsale', function(accounts) {
         });
     });
     it("Should not buy tokens, min amount limit", function(){
-        return RCNCrowdsale.new(accounts[0], accounts[0], 0, 1170000).then(function(instance){
+        currentTime = Math.floor(Date.now() / 1000);
+        return RCNCrowdsale.new(accounts[0], accounts[0], currentTime - 1, currentTime + 10).then(function(instance){
             this.instanceRcn = instance;
             return this.instanceRcn.setWhitelist(accounts[1], rcnToWei(20 * 4000), { from: accounts[0] })
         }).then(function(){
@@ -45,7 +47,7 @@ contract('RCNCrowdsale', function(accounts) {
         }).then(function(tokenInstance){
             this.token2 = tokenInstance;
             this.instanceRcn = instance;
-            return instanceRcn.createTokens({from: accounts[1], value: web3.toWei('0.09', 'ether')});
+            return instanceRcn.buyTokens(accounts[1], {from: accounts[1], value: web3.toWei('0.09', 'ether')});
         }).catch(function(exception){
             this.savedException = exception;
         }).then(function(){
@@ -56,7 +58,8 @@ contract('RCNCrowdsale', function(accounts) {
         });
     });
     it("Should not buy tokens, whitelist", function(){
-        return RCNCrowdsale.new(accounts[0], accounts[0], 0, 1170000).then(function(instance){
+        currentTime = Math.floor(Date.now() / 1000);
+        return RCNCrowdsale.new(accounts[0], accounts[0], currentTime - 1, currentTime + 10).then(function(instance){
             this.instanceRcn = instance;
             return instanceRcn.token();            
         }).then(function(token){
@@ -64,7 +67,7 @@ contract('RCNCrowdsale', function(accounts) {
         }).then(function(tokenInstance){
             this.token2 = tokenInstance;
             this.instanceRcn = instance;
-            return instanceRcn.createTokens({from: accounts[1], value: web3.toWei('2', 'ether')});
+            return instanceRcn.buyTokens(accounts[1], {from: accounts[1], value: web3.toWei('2', 'ether')});
         }).catch(function(exception){
             this.savedException = exception;
         }).then(function(){
