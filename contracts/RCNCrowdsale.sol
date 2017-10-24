@@ -5,6 +5,7 @@ import "./zeppelin/SafeMath.sol";
 import "./Crowdsale.sol";
 import "./CapWhitelist.sol";
 import "./RCNToken.sol";
+import "./PreallocationsWhitelist.sol";
 
 contract RCNCrowdsale is Crowdsale {
     using SafeMath for uint256;
@@ -32,6 +33,7 @@ contract RCNCrowdsale is Crowdsale {
     mapping (address => uint256) bought; // cap map
 
     CapWhitelist public whiteList;
+    PreallocationsWhitelist public preallocationsWhitelist;
     RCNToken public token;
 
     // constructor
@@ -41,6 +43,7 @@ contract RCNCrowdsale is Crowdsale {
           uint256 _fundingEndTimestamp) {
       token = new RCNToken();
       whiteList = new CapWhitelist();
+      preallocationsWhitelist = new PreallocationsWhitelist();
 
       // sanity checks
       assert(_ethFundDeposit != 0x0);
@@ -65,7 +68,7 @@ contract RCNCrowdsale is Crowdsale {
     // low level token purchase function
     function buyTokens(address beneficiary) payable {
       require (!isFinalized);
-      require (block.timestamp >= fundingStartTimestamp);
+      require (block.timestamp >= fundingStartTimestamp || preallocationsWhitelist.whitelist(msg.sender));
       require (block.timestamp <= fundingEndTimestamp);
       require (msg.value != 0);
       require (beneficiary != 0x0);
@@ -76,7 +79,7 @@ contract RCNCrowdsale is Crowdsale {
       uint256 checkedBought = bought[msg.sender].add(tokens);
 
       // if sender is not whitelisted or exceeds their cap, cancel the transaction
-      require (checkedBought <= whiteList.whitelist(msg.sender));
+      require (checkedBought <= whiteList.whitelist(msg.sender) || preallocationsWhitelist.whitelist(msg.sender));
 
       // return money if something goes wrong
       require (tokenCreationCap >= checkedSupply);
@@ -99,6 +102,7 @@ contract RCNCrowdsale is Crowdsale {
       isFinalized = true;
       token.finishMinting();
       whiteList.destruct();
+      preallocationsWhitelist.destruct();
     }
 
     // send ether to the fund collection wallet
@@ -109,5 +113,10 @@ contract RCNCrowdsale is Crowdsale {
     function setWhitelist(address _address, uint256 _amount) {
       require (msg.sender == ethFundDeposit);
       whiteList.setWhitelisted(_address, _amount);
+    }
+
+    function setPreallocationWhitelist(address _address, bool _status) {
+      require (msg.sender == ethFundDeposit);
+      preallocationsWhitelist.setWhitelisted(_address, _status);
     }
 }
